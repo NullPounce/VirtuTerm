@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simulated Linux Terminal</title>
+    <style>
+      #terminal {
+        height: 405px;
+        width: 840px;
+        border: 1px solid #ccc;
+        font-family: monospace;
+        font-size: 16px;
+        background-color: black;
+        color: white;
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        overflow-y: scroll;
+      }
+
+      #top-bar {
+        height: 32px;
+        background-color: #ccc;
+        color: #333;
+        padding: 5px;
+        cursor: move;
+        position: absolute;
+        top: 58px;
+        left: 100px;
+        width: 832px;
+        z-index: 1;
+      }
+
+      #close-btn {
+        float: right;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      #input-line {
+        display: flex;
+        align-items: center;
+        height: 30px;
+        padding: 5px;
+        background-color: #000;
+      }
+
+      #input-prefix {
+        color: #0f0;
+      }
+
+      #input-field {
+        background-color: transparent;
+        border: none;
+        color: white;
+        font-family: monospace;
+        font-size: 16px;
+        width: 100%;
+        margin-left: 5px;
+        outline: none;
+      }
+
+      /* add a margin top to the terminal output to make room for the top bar */
+      #terminal-output {
+        margin-top: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="top-bar">
+      Simulated Linux Terminal
+      <span id="close-btn">X</span>
+    </div>
+
+    <div id="terminal">
+      <div id="terminal-output">
+        <div class="neofetch h-card">
+          <img class="neofetch-img u-logo" src="favicon-310.png" width="32" height="32">
+          <div class="neofetch-text">
+            <b class="magenta">NullPounce</b>@<b class="magenta">github.io</b><br>
+            ----------------------------<br>
+            <span class="p-note">
+              hi i'm <b><a class="silentlink p-name u-url" href="https://github.com/NullPounce">NullPounce</a></b> <br>
+            </span>
+            I enjoy many things, too much to list here, but most notably:<br>
+            <b>making cool things with the help of VScode and ChatGPT, Github etc
+            <br>Arch Linux user, I use Arch by the way...
+            <br> Cyber Security
+            <br> Java/Android DEV
+            <br> genymotion, mobile security framework, helped hunt down Pegasus spyware
+            <br>
+            <b>links:</b>
+            <a href="https://www.google.com/" rel="me noreferrer" target="_blank">link 1</a>
+            <a href="https://www.google.com/" rel="me noreferrer" target="_blank">link 2</a>
+            
+            <br>
+            <b>contact:</b>
+            <a href="https:/www.google.com" rel="me noreferrer" target="_blank">Email</a>
+            <b>changing this text is easy</b>
+            
+            
+            <br>
+        </div>
+        </div>
+      </div>
+      <div id="input-line">
+        <span id="input-prefix"></span>
+        <input type="text" id="input-field">
+      </div>
+    </div>
+
+    <script>
+      const topBar = document.getElementById("top-bar");
+      const terminal = document.getElementById("terminal");
+      const inputField = document.getElementById("input-field");
+      const terminalOutput = document.getElementById("terminal-output");
+      const inputPrefix = document.getElementById("input-prefix");
+
+      let isDragging = false;
+      let dragOffset = { x: 0, y: 0 };
+
+      topBar.addEventListener("mousedown", function(event) {
+        isDragging = true;
+        dragOffset.x = event.offsetX;
+        dragOffset.y = event.offsetY;
+      });
+
+      document.addEventListener("mousemove", function(event) {
+        if (isDragging) {
+          const x = event.pageX - dragOffset.x;
+          const y = event.pageY - dragOffset.y;
+          terminal.style.top = y + "px";
+          terminal.style.left = x + "px";
+          topBar.style.top = y + "px";
+          topBar.style.left = x + "px";
+        }
+      });
+
+      document.addEventListener("mouseup", function(event) {
+  isDragging = false;
+});
+
+function showHelp() {
+  const helpMessage = "These are the available commands: <br> help - shows this help message <br> date - displays the current date and time";
+
+  const outputLine = document.createElement("div");
+  outputLine.innerHTML = helpMessage;
+  terminalOutput.appendChild(outputLine);
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+function showDate() {
+  const date = new Date();
+  const dateString = date.toLocaleString();
+
+  const outputLine = document.createElement("div");
+  outputLine.textContent = dateString;
+  terminalOutput.appendChild(outputLine);
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+function executeCommand(input) {
+  switch (input) {
+    case "help":
+      showHelp();
+      break;
+    case "date":
+      showDate();
+      break;
+    default:
+      const outputLine = document.createElement("div");
+      outputLine.textContent = `${input}: command not found`;
+      terminalOutput.appendChild(outputLine);
+      terminal.scrollTop = terminal.scrollHeight;
+      break;
+  }
+}
+
+inputField.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    const input = inputField.value;
+    const outputLine = document.createElement("div");
+    outputLine.innerHTML = `<span style="color: #0f0;">guest@NullPounce:~$</span> ${input}`;
+    terminalOutput.appendChild(outputLine);
+    executeCommand(input);
+    inputField.value = "";
+    terminal.scrollTop = terminal.scrollHeight;
+  }
+});
+
+inputPrefix.innerHTML = `<span style="color: #0f0;">guest@NullPounce:~$</span>`;
+</script>
+</body>
+</html>
